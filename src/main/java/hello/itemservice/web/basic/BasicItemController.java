@@ -5,9 +5,7 @@ import hello.itemservice.domain.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -31,6 +29,38 @@ public class BasicItemController {
         model.addAttribute("item", item);
         return "basic/item";
     }
+
+    @GetMapping("/add")
+    public String addform(){
+        return "basic/addForm";
+    }
+//    @PostMapping("/add")
+    public String addItemV1(@RequestParam String itemName,
+                       @RequestParam int price,
+                       @RequestParam Integer quantity,
+                       Model model){
+        Item item = new Item();
+        item.setItemName(itemName);
+        item.setPrice(price);
+        item.setQuantity(quantity);
+
+        itemRepository.save(item);
+
+        model.addAttribute("item", item);
+
+        return "basic/item";
+
+      //*PostMapping 사용
+    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute("item")Item item, Model model){
+
+        itemRepository.save(item);
+        model.addAttribute("item", item);
+
+        return "basic/item";
+    }
+    //같은 기능이지만 http메서드를 통해 구분해서 겟 포스트로 사용
+    //하나의 url로 상품등록폼과 상품등록처리 를 동시처리가능
     /**
      *테스트용 데이터 추가
      */
