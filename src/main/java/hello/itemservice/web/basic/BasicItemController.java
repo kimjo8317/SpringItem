@@ -31,14 +31,15 @@ public class BasicItemController {
     }
 
     @GetMapping("/add")
-    public String addform(){
+    public String addForm(){
         return "basic/addForm";
     }
+
 //    @PostMapping("/add")
     public String addItemV1(@RequestParam String itemName,
-                       @RequestParam int price,
-                       @RequestParam Integer quantity,
-                       Model model){
+                            @RequestParam int price,
+                            @RequestParam Integer quantity,
+                            Model model) {
         Item item = new Item();
         item.setItemName(itemName);
         item.setPrice(price);
@@ -49,21 +50,45 @@ public class BasicItemController {
         model.addAttribute("item", item);
 
         return "basic/item";
+    }
 
-      //*PostMapping 사용
-    @PostMapping("/add")
-    public String addItemV2(@ModelAttribute("item")Item item, Model model){
+//    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute("item") Item item, Model model) {
+        itemRepository.save(item);
+//        model.addAttribute("item", item); //자동 추가, 생략 가능
+        return "basic/item";
+        }
+
+//    @PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item, Model model) {
 
         itemRepository.save(item);
-        model.addAttribute("item", item);
+//        model.addAttribute("item", item); //자동 추가, 생략 가능
+        return "basic/item";
+    }
+    @PostMapping("/add")
+    public String addItemV4(Item item) {
 
+        itemRepository.save(item);
         return "basic/item";
     }
     //같은 기능이지만 http메서드를 통해 구분해서 겟 포스트로 사용
     //하나의 url로 상품등록폼과 상품등록처리 를 동시처리가능
-    /**
-     *테스트용 데이터 추가
-     */
+
+    @GetMapping("/{itemId}/edit")//상품수정폼
+    public String editForm(@PathVariable Long itemId, Model model) {
+        Item item = itemRepository.findById(itemId);
+        model.addAttribute("item", item);
+        return "basic/editForm";
+    }
+
+
+    @PostMapping("/{itemId}/edit")//상품수정처리
+    public String edit(@PathVariable Long itemId, @ModelAttribute Item item) {
+        itemRepository.update(itemId, item);
+        return "redirect:/basic/items/{itemId}";
+    }
+
     @PostConstruct
     public void init() {
 
