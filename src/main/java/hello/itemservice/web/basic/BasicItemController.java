@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -34,6 +35,8 @@ public class BasicItemController {
     public String addForm(){
         return "basic/addForm";
     }
+    //같은 기능이지만 http메서드를 통해 구분해서 겟 포스트로 사용
+    //하나의 url로 상품등록폼과 상품등록처리 를 동시처리가능
 
 //    @PostMapping("/add")
     public String addItemV1(@RequestParam String itemName,
@@ -61,27 +64,30 @@ public class BasicItemController {
 
 //    @PostMapping("/add")
     public String addItemV3(@ModelAttribute Item item, Model model) {
-
         itemRepository.save(item);
 //        model.addAttribute("item", item); //자동 추가, 생략 가능
         return "basic/item";
     }
 //    @PostMapping("/add")
     public String addItemV4(Item item) {
-
         itemRepository.save(item);
         return "basic/item";
     }
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV5(Item item) {
-
         itemRepository.save(item);
         return "redirect:/basic/items/" + item.getId();
     }
     //PRG 적용
+    @PostMapping("/add")
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
 
-    //같은 기능이지만 http메서드를 통해 구분해서 겟 포스트로 사용
-    //하나의 url로 상품등록폼과 상품등록처리 를 동시처리가능
+        return "redirect:/basic/items/{itemId}";
+    }
+
 
     @GetMapping("/{itemId}/edit")//상품수정폼
     public String editForm(@PathVariable Long itemId, Model model) {
