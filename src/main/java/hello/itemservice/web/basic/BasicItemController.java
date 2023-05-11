@@ -66,12 +66,20 @@ public class BasicItemController {
 //        model.addAttribute("item", item); //자동 추가, 생략 가능
         return "basic/item";
     }
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV4(Item item) {
 
         itemRepository.save(item);
         return "basic/item";
     }
+    @PostMapping("/add")
+    public String addItemV5(Item item) {
+
+        itemRepository.save(item);
+        return "redirect:/basic/items/" + item.getId();
+    }
+    //PRG 적용
+
     //같은 기능이지만 http메서드를 통해 구분해서 겟 포스트로 사용
     //하나의 url로 상품등록폼과 상품등록처리 를 동시처리가능
 
